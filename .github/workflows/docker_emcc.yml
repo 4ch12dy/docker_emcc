@@ -24,10 +24,3 @@ jobs:
             sed -i "s/61bcdefg/4ch12dy/g" Dockerfile
             sed -i "s/llvm-16.0.0rel/llvm-15.0.2rel/g" Dockerfile
             docker build -t emcc-obf .
-
-        - uses: P3TERX/ssh2actions@main
-        name: Start SSH via tmate
-        continue-on-error: true
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
