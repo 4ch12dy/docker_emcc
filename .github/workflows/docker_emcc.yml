@@ -5,8 +5,8 @@ on:
   - cron: '0 * * * *'
 
 jobs:
-    cron-docker_emcc:
-        name: docker_emcc
+    docker_emcc_build:
+        name: emcc_build
         runs-on: ubuntu-22.04
         steps:
         - run: |
