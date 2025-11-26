@@ -1,0 +1,33 @@
+name: docker_emcc
+on:
+  push:
+  schedule:
+  - cron: '0 * * * *'
+
+jobs:
+    cron-docker_emcc:
+        name: docker_emcc
+        runs-on: ubuntu-22.04
+        steps:
+        - run: |
+            git clone https://github.com/HakonHarnes/emcc-obf.git
+            cd emcc-obf
+            sed -i '2a\
+                    RUN sed -i "/^\\[community\\]/,/^Include/d" /etc/pacman.conf \
+                    RUN echo -e "[extra]\\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf \
+                    RUN yes | pacman-key --init \
+                    RUN yes | sudo pacman -Sy archlinux-keyring \
+                    RUN yes | sudo pacman-key --populate archlinux \
+                    RUN yes | sudo pacman -Syyu' Dockerfile
+            # sed -i '1a ENV CXXFLAGS="$CXXFLAGS -include cstdint"' Dockerfile
+            sed -i '/cmake/i ENV CXXFLAGS="$CXXFLAGS -include cstdint"' Dockerfile
+            sed -i "s/61bcdefg/4ch12dy/g" Dockerfile
+            sed -i "s/llvm-16.0.0rel/llvm-15.0.2rel/g" Dockerfile
+            docker build -t emcc-obf .
+
+        - uses: P3TERX/ssh2actions@main
+        name: Start SSH via tmate
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
